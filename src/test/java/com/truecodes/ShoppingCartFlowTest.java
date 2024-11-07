@@ -2,7 +2,9 @@ package com.truecodes;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
@@ -146,9 +148,15 @@ public class ShoppingCartFlowTest extends BaseSetup{
     public void verifyModal(){
         // Locate the modal by its ID
         WebElement modal = driver.findElement(By.id("cartModal"));
-        WebElement show = wait.until(ExpectedConditions.)
-        boolean modalVisible = modal.getAttribute("class").contains("show");
-        Assert.assertEquals(modalVisible, true, "Modal is not visible");
+
+        // Custom wait condition to check for the 'show' class in the modal
+        final boolean[] modalVisible = new boolean[1];
+        wait.until((ExpectedCondition<Boolean>) driver -> {
+            modalVisible[0] = modal.getAttribute("class").contains("show");
+            return modalVisible[0];
+        });
+
+        Assert.assertTrue(modalVisible[0], "Modal is not visible");
         WebElement modalContent = wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("modal-content")));
         // Verify modal title is "Added!"
         WebElement modalTitle = modalContent.findElement(By.className("modal-title"));
@@ -156,7 +164,7 @@ public class ShoppingCartFlowTest extends BaseSetup{
         Assert.assertEquals(modalTitleText, "Added!", "Modal title is not as expected.");
 
         // Verify modal body text is "Your product has been added to cart."
-        WebElement modalBodyText = modalContent.findElement(By.xpath("//div[@class='modal-body']/p)[1]"));
+        WebElement modalBodyText = modalContent.findElement(By.xpath("//*[@id=\"cartModal\"]/div/div/div[2]/p[1]"));
         Assert.assertEquals(modalBodyText.getText().trim(),"Your product has been added to cart.", "Modal body text is not displayed correctly.");
 
         // Verify "Continue Shopping" button is present and clickable
@@ -169,7 +177,7 @@ public class ShoppingCartFlowTest extends BaseSetup{
 
 
         boolean visibility = modal.getAttribute("class").contains("fade");
-        Assert.assertEquals(visibility, true, "Modal is still visible");
+        Assert.assertTrue(visibility, "Modal is still visible");
 
         // Add another t-shirt to the cart
         WebElement graphicDesignProduct=null;
@@ -213,7 +221,9 @@ public class ShoppingCartFlowTest extends BaseSetup{
         String secondProductName = rows.get(1).findElement(By.cssSelector(".cart_description h4 a")).getText();
 
         String firstProductPrice = rows.get(0).findElement(By.cssSelector(".cart_price p")).getText().trim();
+        Integer neonActualPrice = Integer.parseInt(firstProductPrice.replace("Rs. ",""));
         String secondProductPrice = rows.get(1).findElement(By.cssSelector(".cart_price p")).getText().trim();
+        Integer graphicActualPrice = Integer.parseInt(secondProductPrice.replace("Rs. ",""));
 
 
 
@@ -222,8 +232,8 @@ public class ShoppingCartFlowTest extends BaseSetup{
         Assert.assertEquals(secondProductName.trim(), "GRAPHIC DESIGN MEN T SHIRT - BLUE", "The second product name is incorrect.");
 
         // Validate neon tshirt price
-        Assert.assertEquals(Integer.parseInt(firstProductPrice), priceNeonExpected, "Neon product price mismatch");
-        Assert.assertEquals(Integer.parseInt(secondProductPrice), priceGraphicExpected, "Neon product price mismatch");
+        Assert.assertEquals(neonActualPrice, priceNeonExpected, "Neon product price mismatch");
+        Assert.assertEquals(graphicActualPrice, priceGraphicExpected, "Neon product price mismatch");
 
         // Click on the proceed to checkout button
         WebElement checkout = wait.until(ExpectedConditions.elementToBeClickable(driver.findElement(By.xpath("//a[@class='btn btn-default check_out']"))));

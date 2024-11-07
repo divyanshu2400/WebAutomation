@@ -1,5 +1,6 @@
 package com.truecodes;
 
+import com.truecodes.pages.ShoppingCartFlow;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebElement;
@@ -9,34 +10,19 @@ import java.util.List;
 import java.util.Objects;
 
 public class ShoppingCartFlowTest extends BaseSetup{
+    ShoppingCartFlow shoppingCartFlow = ShoppingCartFlow.getShoppingCartInstance(driver);
     List<WebElement> products;
     @Test(priority = 1)
     public void navigateMenTShirtTest() {
-        WebElement menCategory = driver.findElement(By.xpath("//a[normalize-space()='Men']"));
-        ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", menCategory);
-        wait.waitUntilVisibility(menCategory);
-
-        // Open Men category section
-        menCategory.click();
-
-        // now open t-shirts section under men
-        WebElement tshirt = driver.findElement(By.xpath("//a[normalize-space()='Tshirts']"));
-        wait.waitUntilVisibility(tshirt);
-        tshirt.click();
-
-        // wait until url get loaded
-        wait.waitUntilUrlToBe("https://automationexercise.com/category_products/3");
-
-        WebElement tshirtsLink = wait.waitUntilVisibilityOfElementLocatedLinkText("TSHIRTS");
-
-        // Verify the link's text
+        WebElement tshirtsLink = shoppingCartFlow.navigateToTshirt();
         String linkText = tshirtsLink.getText();
+        String href = tshirtsLink.getAttribute("href");
+        // Verify the link's text
         Assert.assertEquals(linkText.trim(), "TSHIRTS", "Link text does not match the expected value!");
         // Assert that the href attribute is correct
-        String href = tshirtsLink.getAttribute("href");
         Assert.assertEquals(href, "https://automationexercise.com/category_products/3#", "The link URL is incorrect!");
 
-        // Optionally, you can also verify that the element is an <a> tag (anchor tag)
+        // verify that the element is an <a> tag (anchor tag)
         Assert.assertEquals(tshirtsLink.getTagName(), "a", "The element is not a link!");
 
 

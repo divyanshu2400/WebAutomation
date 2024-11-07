@@ -23,9 +23,6 @@ import static io.restassured.module.jsv.JsonSchemaValidator.matchesJsonSchemaInC
 import static org.hamcrest.Matchers.equalTo;
 
 public class APIDocTest extends BaseSetup{
-    WebDriverWait wait;
-    Actions actions;
-    JavascriptExecutor jse;
     Map<String, String> api1=new HashMap<>();
     Map<String, String> api2=new HashMap<>();
     Map<String, String> api4=new HashMap<>();
@@ -57,15 +54,8 @@ public class APIDocTest extends BaseSetup{
 
     @Test
     public void testApiLists() throws InterruptedException {
-        driver.get(PAGE_URL);// Open the target webpage
-
         // Navigate to APIs list for practice
         driver.findElement(By.xpath("//div[@class='item active']//button[@type='button'][normalize-space()='APIs list for practice']")).click();
-
-        // Create WebDriverWait instance (wait up to 10 seconds)
-        wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-        actions = new Actions(driver);
-        jse = (JavascriptExecutor)driver;
         // expanding 5 apis
         expandApi1();
         expandApi2();

@@ -51,7 +51,7 @@ public class HomePageElementTest extends BaseSetup{
 
         ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", brandsSection);
 
-        wait.until(ExpectedConditions.visibilityOf(brandsSection));
+        wait.waitUntilVisibility(brandsSection);
         List<WebElement> brandListItems = driver.findElements(By.xpath("//div[@class='brands-name']//ul[@class='nav nav-pills nav-stacked']//li"));
 
         Assert.assertEquals(brandListItems.size(), 8, "Expected 9 brands in the list");
@@ -67,7 +67,7 @@ public class HomePageElementTest extends BaseSetup{
     public void verifyFeaturedSection(){
         WebElement featuresSection = driver.findElement(By.xpath("//h2[normalize-space()='Features Items']"));
         ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", featuresSection);
-         wait.until(ExpectedConditions.visibilityOf(featuresSection));
+         wait.waitUntilVisibility(featuresSection);
 
         List<WebElement> products = driver.findElements(By.cssSelector(".features_items .col-sm-4"));
 
@@ -109,9 +109,9 @@ public class HomePageElementTest extends BaseSetup{
     public void footerSubsSection(){
         WebElement footerSection = driver.findElement(By.xpath("//h2[normalize-space()='Subscription']"));
         ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", footerSection);
-        wait.until(ExpectedConditions.visibilityOf(footerSection));
+        wait.waitUntilVisibility(footerSection);
 
-        WebElement emailInput = wait.until(ExpectedConditions.visibilityOf(driver.findElement(By.id("susbscribe_email"))));
+        WebElement emailInput = wait.waitUntilVisibilityById(driver,"susbscribe_email");
         Assert.assertTrue(emailInput.isDisplayed(), "Email input field is not displayed in the footer");
 
         // Locate the submit button

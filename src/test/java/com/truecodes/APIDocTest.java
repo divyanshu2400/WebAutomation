@@ -6,7 +6,6 @@ import io.restassured.response.Response;
 import org.hamcrest.MatcherAssert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -27,13 +26,12 @@ public class APIDocTest extends BaseSetup{
 
     public void testProductSchemaValidation(String apiUrl) {
         // Replace with your actual URL
-        String url = apiUrl;
 
         // Send GET request to fetch the products
         Response response = RestAssured
                 .given()
                 .when()
-                .get(url)
+                .get(apiUrl)
                 .then()
                 .extract()
                 .response();
@@ -148,7 +146,6 @@ public class APIDocTest extends BaseSetup{
     @Test(priority =6)
     public void validateApi14(){
         RestAssured.baseURI = api13.get("url");
-        RestAssured.baseURI = "https://automationexercise.com/api/getUserDetailByEmail";
 
         String email = "example@example.com";
 
@@ -217,12 +214,12 @@ public class APIDocTest extends BaseSetup{
         WebElement API1Element = driver.findElement(By.xpath("//u[normalize-space()='API 1: Get All Products List']"));
 
         jse.executeScript("arguments[0].scrollIntoView()", API1Element);
-        wait.until(ExpectedConditions.elementToBeClickable(API1Element)).click();
+        wait.waitUntilElementToBeClickable(API1Element).click();
         // Locate the <ul> element with the class "list-group"
         WebElement listGroup = driver.findElement(By.className("list-group"));
 
         // Extract the API URL
-        WebElement apiUrlElement = wait.until(ExpectedConditions.visibilityOf(driver.findElement(By.xpath("//li[b/text()='API URL:']/a"))));
+        WebElement apiUrlElement = wait.waitUntilVisibility("//li[b/text()='API URL:']/a");
         String apiUrl = apiUrlElement.getAttribute("href");
         // Extract the Request Method
         WebElement requestMethodElement = listGroup.findElement(By.xpath("//li[b/text()='Request Method:']"));
@@ -259,7 +256,7 @@ public class APIDocTest extends BaseSetup{
         WebElement API2Element = driver.findElement(By.xpath("//u[normalize-space()='API 2: POST To All Products List']"));
 
         jse.executeScript("arguments[0].scrollIntoView()", API2Element);
-        wait.until(ExpectedConditions.elementToBeClickable(API2Element)).click();
+        wait.waitUntilElementToBeClickable(API2Element).click();
         // Locate the <ul> element with the class "list-group"
         WebElement listGroup = driver.findElement(By.className("list-group"));
 
@@ -267,7 +264,7 @@ public class APIDocTest extends BaseSetup{
         WebElement apiUrlElement = listGroup.findElement(By.xpath("//li[b/text()='API URL:']/a"));
         String apiUrl = apiUrlElement.getAttribute("href");
         // Extract the Request Method
-        WebElement requestMethodElement = wait.until(ExpectedConditions.visibilityOf(driver.findElement(By.xpath("/html[1]/body[1]/section[1]/div[1]/div[3]/div[1]/div[2]/ul[1]/li[2]"))));
+        WebElement requestMethodElement = wait.waitUntilVisibility("/html[1]/body[1]/section[1]/div[1]/div[3]/div[1]/div[2]/ul[1]/li[2]");
         String requestMethod = requestMethodElement.getText().replace("Request Method: ", "");
 
         // Extract the Response Code
@@ -301,10 +298,10 @@ public class APIDocTest extends BaseSetup{
         // expanding API1 GET method
         WebElement API4Element =  driver.findElement(By.xpath("//u[normalize-space()='API 4: PUT To All Brands List']"));
         jse.executeScript("arguments[0].scrollIntoView()", API4Element);
-        wait.until(ExpectedConditions.elementToBeClickable(API4Element)).click();
+        wait.waitUntilElementToBeClickable(API4Element).click();
 
         // Extract the API URL
-        WebElement apiUrlElement = wait.until(ExpectedConditions.visibilityOf(driver.findElement(By.xpath("//div[@id='collapse4']//a[@target='_blank']"))));
+        WebElement apiUrlElement = wait.waitUntilVisibility("//div[@id='collapse4']//a[@target='_blank']");
         String apiUrl = apiUrlElement.getAttribute("href");
         // Extract the Request Method
         WebElement requestMethodElement = driver.findElement(By.xpath("/html[1]/body[1]/section[1]/div[1]/div[5]/div[1]/div[2]/ul[1]/li[2]"));
@@ -342,10 +339,10 @@ public class APIDocTest extends BaseSetup{
         // expanding API1 GET method
         WebElement API9Element =  driver.findElement(By.xpath("//u[normalize-space()='API 9: DELETE To Verify Login']"));
         jse.executeScript("arguments[0].scrollIntoView()", API9Element);
-        wait.until(ExpectedConditions.elementToBeClickable(API9Element)).click();
+        wait.waitUntilElementToBeClickable(API9Element).click();
 
         // Extract the API URL
-        WebElement apiUrlElement = wait.until(ExpectedConditions.visibilityOf(driver.findElement(By.xpath("//div[@id='collapse9']//a[@target='_blank']"))));
+        WebElement apiUrlElement = wait.waitUntilVisibility("//div[@id='collapse9']//a[@target='_blank']");
         String apiUrl = apiUrlElement.getAttribute("href");
         // Extract the Request Method
         WebElement requestMethodElement = driver.findElement(By.xpath("//div[@id='collapse9']//li[2]"));
@@ -383,10 +380,10 @@ public class APIDocTest extends BaseSetup{
         // expanding API1 GET method
         WebElement API14Element = driver.findElement(By.xpath("//u[normalize-space()='API 14: GET user account detail by email']"));
         jse.executeScript("arguments[0].scrollIntoView()", API14Element);
-        wait.until(ExpectedConditions.elementToBeClickable(API14Element)).click();
+        wait.waitUntilElementToBeClickable(API14Element).click();
 
         // Extract the API URL
-        WebElement apiUrlElement = wait.until(ExpectedConditions.visibilityOf(driver.findElement(By.xpath("//div[@id='collapse14']//a[@target='_blank']"))));
+        WebElement apiUrlElement = wait.waitUntilVisibility("//div[@id='collapse14']//a[@target='_blank']");
         String apiUrl = apiUrlElement.getAttribute("href");
         // Extract the Request Method
         WebElement requestMethodElement = driver.findElement(By.xpath("//div[@id='collapse14']//li[2]"));

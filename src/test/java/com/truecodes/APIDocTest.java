@@ -1,7 +1,9 @@
 package com.truecodes;
 
 import io.restassured.RestAssured;
+import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
+import org.hamcrest.MatcherAssert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
@@ -18,6 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static io.restassured.module.jsv.JsonSchemaValidator.matchesJsonSchemaInClasspath;
+import static org.hamcrest.Matchers.equalTo;
 
 public class APIDocTest extends BaseSetup{
     WebDriverWait wait;
@@ -30,8 +33,30 @@ public class APIDocTest extends BaseSetup{
     Map<String, String> api13=new HashMap<>();
 
     public static final String PAGE_URL = "https://automationexercise.com/";
+
+
+    public void testProductSchemaValidation(String apiUrl) {
+        // Replace with your actual URL
+        String url = apiUrl;
+
+        // Send GET request to fetch the products
+        Response response = RestAssured
+                .given()
+                .when()
+                .get(url)
+                .then()
+                .extract()
+                .response();
+
+        // Validate the JSON response schema
+        response.then().assertThat()
+                .body(matchesJsonSchemaInClasspath("schema.json"));  // Ensure the schema.json is in your classpath
+
+        System.out.println("Response matches the expected schema.");
+    }
+
     @Test
-    public void navigateToCareersPage() throws InterruptedException {
+    public void testApiLists() throws InterruptedException {
         driver.get(PAGE_URL);// Open the target webpage
 
         // Navigate to APIs list for practice
@@ -48,29 +73,39 @@ public class APIDocTest extends BaseSetup{
         expandApi9();
         expandApi14();
 
-        // Make API Request:
-        // save response for all 5 apis
+        // Make API Request: save response for all 5 apis
         // API1 GET Response
-
-
-        // Expected values for response code, message, and schema
-        String jsonSchemaPath = "schemas/response-schema.json";  // Path to the JSON schema file
-
         // Send the request using RestAssured
         Response responseApi1 = RestAssured.given()
-                .baseUri(api1.get("url"))
+                .given()
                 .when()
-                .get();
+                .get(api1.get("url"))
+//                .get("https://automationexercise.com/api/productsList")
+                .then()
+                .extract()
+                .response();
 
         // Validate the response code
         String actualResponseCode = String.valueOf(responseApi1.getStatusCode());
         Assert.assertEquals(actualResponseCode, api1.get("statusCode"), "Response code mismatch");
+        // Extract response body as a string for debugging purposes
+        String responseBody = responseApi1.getBody().asString();
+        System.out.println("Response: " + responseBody);
 
-        // Validate the response message
-        String actualResponseMessage = responseApi1.getStatusLine();
-        System.out.println(actualResponseMessage+" --"+ actualResponseCode);
-        Assert.assertTrue(actualResponseMessage.contains(api1.get("response")), "Response message mismatch");
-        responseApi1.then().assertThat().body(matchesJsonSchemaInClasspath(jsonSchemaPath));
+        // Extract the list of products using JsonPath
+        JsonPath jsonPath = responseApi1.jsonPath();
+
+        // Get the list of products from the response (adjust path based on your actual response structure)
+        int productCount = jsonPath.getList("products").size();
+
+        // 1. Verify the number of products
+        int expectedProductCount = 34; // Adjust this to the expected number of products
+        MatcherAssert.assertThat("Product count does not match expected!", productCount, equalTo(expectedProductCount));
+
+        System.out.println("Total number of products: " + productCount);
+        //Validate schema
+        testProductSchemaValidation(api1.get("url"));
+
     }
     // expanding API1
     public void expandApi1() {

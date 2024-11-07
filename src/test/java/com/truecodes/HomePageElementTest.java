@@ -2,20 +2,13 @@ package com.truecodes;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import java.time.Duration;
 import java.util.List;
 
 public class HomePageElementTest extends BaseSetup{
-
-
-    public static final String PAGE_URL = "https://automationexercise.com/";
-
 
     @Test
     public void verifyMenuOptions() {
@@ -54,18 +47,13 @@ public class HomePageElementTest extends BaseSetup{
     }
     @Test
     public void verifyBrandsSection() {
-        // Locate the brands section container (the div containing the list of brands)
         WebElement brandsSection = driver.findElement(By.xpath("//h2[normalize-space()='Brands']"));
 
-        // Scroll down to the brands section to ensure it's in the viewport
         ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", brandsSection);
 
-        // Wait until the brands section is visible (optional, but helpful for stability)
         wait.until(ExpectedConditions.visibilityOf(brandsSection));
-        // Locate the brands list items
         List<WebElement> brandListItems = driver.findElements(By.xpath("//div[@class='brands-name']//ul[@class='nav nav-pills nav-stacked']//li"));
 
-        // Verify that exactly 9 brands are listed
         Assert.assertEquals(brandListItems.size(), 8, "Expected 9 brands in the list");
 
         // Optionally, verify that each brand name is visible and has the correct format
@@ -75,6 +63,70 @@ public class HomePageElementTest extends BaseSetup{
             Assert.assertTrue(brandName.contains("("), "Brand name should have a product count in parentheses");
         }
     }
+    @Test
+    public void verifyFeaturedSection(){
+        WebElement featuresSection = driver.findElement(By.xpath("//h2[normalize-space()='Features Items']"));
+        ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", featuresSection);
+         wait.until(ExpectedConditions.visibilityOf(featuresSection));
 
+        List<WebElement> products = driver.findElements(By.cssSelector(".features_items .col-sm-4"));
+
+        // Verify that several products are displayed (e.g., at least 3 products in the first row)
+        Assert.assertTrue(products.size() >= 3, "Less than 3 products are displayed in the Featured Items section");
+        for (int i = 0; i < Math.min(3, products.size()); i++) {  // Check the first 3 products
+            WebElement product = products.get(i);
+
+            // Verify that the product has an image
+            WebElement productImage = product.findElement(By.cssSelector(".productinfo img"));
+            Assert.assertTrue(productImage.isDisplayed(), "Product image is not displayed for product " + (i + 1));
+
+            // Verify that the product has a name
+            WebElement productName = product.findElement(By.cssSelector(".productinfo p"));
+            Assert.assertTrue(productName.isDisplayed(), "Product name is not displayed for product " + (i + 1));
+
+            // Verify that the product has a price
+            WebElement productPrice = product.findElement(By.cssSelector(".productinfo h2"));
+            Assert.assertTrue(productPrice.isDisplayed(), "Product price is not displayed for product " + (i + 1));
+
+            // Verify that the "Add to cart" button is visible
+            WebElement addToCartButton = product.findElement(By.cssSelector(".add-to-cart"));
+            Assert.assertTrue(addToCartButton.isDisplayed(), "Add to cart button is not visible for product " + (i + 1));
+
+            // Optionally: Verify the "View Product" link
+            WebElement viewProductLink = product.findElement(By.cssSelector(".choose .nav-pills li a"));
+            Assert.assertTrue(viewProductLink.isDisplayed(), "View Product link is not visible for product " + (i + 1));
+        }
+
+        // Verify that the products are displayed in rows of 3
+        for (int i = 0; i < products.size(); i++) {
+            // Each product should be inside a div with class 'col-sm-4'
+            WebElement product = products.get(i);
+            Assert.assertTrue(product.getAttribute("class").contains("col-sm-4"), "Product " + (i + 1) + " is not correctly placed in a 3-column grid");
+        }
+    }
+
+    @Test
+    public void footerSubsSection(){
+        WebElement footerSection = driver.findElement(By.xpath("//h2[normalize-space()='Subscription']"));
+        ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", footerSection);
+        wait.until(ExpectedConditions.visibilityOf(footerSection));
+
+        WebElement emailInput = wait.until(ExpectedConditions.visibilityOf(driver.findElement(By.id("susbscribe_email"))));
+        Assert.assertTrue(emailInput.isDisplayed(), "Email input field is not displayed in the footer");
+
+        // Locate the submit button
+        WebElement subscribeButton = driver.findElement(By.id("subscribe"));
+        Assert.assertTrue(subscribeButton.isDisplayed(), "Subscribe button is not displayed in the footer");
+
+        // Optionally, check if the submit button is clickable
+        Assert.assertTrue(subscribeButton.isEnabled(), "Subscribe button is not clickable");
+
+        // Check if the input is interactable by entering an email
+        emailInput.sendKeys("divyanshu0924@gmail.com");
+
+        // Verify the submit button is still clickable after entering an email
+        Assert.assertTrue(subscribeButton.isEnabled(), "Subscribe button is not clickable after entering an email");
+
+    }
 
 }

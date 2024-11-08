@@ -25,14 +25,15 @@ public class ShoppingCartFlowTest extends BaseSetup{
         // verify that the element is an <a> tag (anchor tag)
         Assert.assertEquals(tshirtsLink.getTagName(), "a", "The element is not a link!");
 
-
-        // validate tshirts price, product info, add to cart button
-         products = driver.findElements(By.cssSelector(".product-image-wrapper"));
+    }
+    @Test(priority = 2)
+    public void productDescTest(){
+        products = shoppingCartFlow.productDescs();
         // Define the T-shirt keywords to check in the product name
         String[] tshirtKeywords = {"T-Shirt", "Tshirt", "T-Shirts", "Tshirt", "T SHIRT"};
 
         for (WebElement product : products) {
-            WebElement productNameElement = product.findElement(By.cssSelector("p"));
+            WebElement productNameElement = shoppingCartFlow.productName(product);
             String productName = productNameElement.getText();
             System.out.println(productName);
             boolean containsKeyword = false;
@@ -42,118 +43,76 @@ public class ShoppingCartFlowTest extends BaseSetup{
                     break;
                 }
             }
+            WebElement productPriceElement = shoppingCartFlow.productPrice(product);
+            WebElement productImage = shoppingCartFlow.productImg(product);
+            WebElement viewProductLink = shoppingCartFlow.productLink(product);
+            WebElement addToCartButton = shoppingCartFlow.addToCartBtn(product);
 
-            // Assert that the product name contains at least one of the tshirt keyword
-            Assert.assertTrue(containsKeyword, "Product name does not contain any of the expected keywords (T-Shirt, Tshirt, Cotton, etc.): " + productName);
-
-            // Validate the price
-            WebElement productPriceElement = product.findElement(By.cssSelector("h2"));
             String productPrice = productPriceElement.getText();
-            Assert.assertTrue(productPrice.startsWith("Rs."), "Price format is incorrect for product: " + productName);
+            System.out.println(productPrice);
+            String viewProductHref = viewProductLink.getAttribute("href");// Validate the 'View Product' link is correct
 
-            // Validate the image exists
-            WebElement productImage = product.findElement(By.cssSelector("img"));
-            Assert.assertTrue(productImage.isDisplayed(), "Image is not displayed for product: " + productName);
-
-            // Validate the 'View Product' link is correct
-            WebElement viewProductLink = product.findElement(By.cssSelector(".choose .nav-pills li a"));
-            String viewProductHref = viewProductLink.getAttribute("href");
-            assert viewProductHref != null;
+            // validate tshirts price, product info, add to cart button
+            Assert.assertTrue(containsKeyword, "Product name does not contain any of the expected keywords " + productName);// Assert that the product name contains at least one of the tshirt keyword
+            Assert.assertTrue(productPrice.startsWith("Rs."), "Price format is incorrect for product: " + productName);// Validate the price
+            Assert.assertTrue(productImage.isDisplayed(), "Image is not displayed for product: " + productName);// Validate the image exists
             Assert.assertTrue(viewProductHref.contains("/product_details/"), "View Product link is incorrect for product: " + productName);
-
-            // Validate the 'Add to Cart' button exists
-            WebElement addToCartButton = product.findElement(By.cssSelector(".add-to-cart"));
-            Assert.assertTrue(addToCartButton.isDisplayed(), "Add to Cart button is not displayed for product: " + productName);
+            Assert.assertTrue(addToCartButton.isDisplayed(), "Add to Cart button is not displayed for product: " + productName);// Validate the 'Add to Cart' button exists
         }
     }
     Integer priceNeonExpected;
-    @Test(priority = 2)
+    WebElement addToCartButtonHover;
+    @Test(priority = 3)
     public void neonGreenTshirtVisibiltiyTest(){
         WebElement neonProduct=null;
         String productName="";
         for (WebElement product : products) {
             neonProduct = product;
-            WebElement productNameElement = neonProduct.findElement(By.cssSelector("p"));
+            WebElement productNameElement = shoppingCartFlow.productName(neonProduct);
             productName = productNameElement.getText();
             if (productName.trim().contains("Pure Cotton Neon Green Tshirt")) break;
         }
-        // Scroll to "Pure Cotton Neon Green Tshirt"
-        ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", neonProduct);
-        wait.waitUntilVisibility(neonProduct);
+        WebElement productOverlay = shoppingCartFlow.neonTshirt(neonProduct);
+        WebElement productPriceElement = shoppingCartFlow.productPrice(neonProduct);
+        WebElement viewProductLink = shoppingCartFlow.productLink(neonProduct);
+        WebElement addToCartButton = shoppingCartFlow.addToCartBtn(neonProduct);
+        WebElement priceElement = shoppingCartFlow.neonPrice(productOverlay);// Validate that the price is visible
+        addToCartButtonHover = shoppingCartFlow.neonAddToCartBtn(productOverlay);
+        WebElement overlayTextElement = shoppingCartFlow.neonName(productOverlay);
 
-//         Verify price, add to cart and view details button is visible
-
-        // verify price
-        assert neonProduct != null;
-        WebElement productPriceElement = neonProduct.findElement(By.cssSelector("h2"));
         String productPrice = productPriceElement.getText();
-        Assert.assertTrue(productPrice.startsWith("Rs."), "Price format is incorrect for product: " + productName);
-
-        // Validate the 'View Product' link is correct
-        WebElement viewProductLink = neonProduct.findElement(By.cssSelector(".choose .nav-pills li a"));
         String viewProductHref = viewProductLink.getAttribute("href");
-        assert viewProductHref != null;
-        Assert.assertTrue(viewProductHref.contains("/product_details/"), "View Product link is incorrect for product: " + productName);
-
-        // Validate the 'Add to Cart' button exists
-        WebElement addToCartButton = neonProduct.findElement(By.cssSelector(".add-to-cart"));
-        Assert.assertTrue(addToCartButton.isDisplayed(), "Add to Cart button is not displayed for product: " + productName);
-
-
-        // Hover over the tshirt
-        actions.moveToElement(neonProduct).perform();
-        // Wait for the overlay to become visible after hover
-        WebElement productOverlay = wait.waitUntilVisibilityOfWebElementByCssSelector(neonProduct,".product-overlay");
-        // Validate that overlay is visible and contains the expected elements
-
-        // Validate that the price is visible
-        WebElement priceElement = productOverlay.findElement(By.cssSelector(".overlay-content h2"));
         String priceText = priceElement.getText();
         String saveNeon = priceText.replace("Rs. ","");
         priceNeonExpected = Integer.parseInt(saveNeon);
-        Assert.assertTrue(priceText.contains("Rs."), "Price is not displayed or is in an incorrect format: " + priceText);
-
-        // Validate that the "Add to Cart" button is visible
-        WebElement addToCartButtonHover = productOverlay.findElement(By.cssSelector(".overlay-content .add-to-cart"));
-        Assert.assertTrue(addToCartButtonHover.isDisplayed(), "Add to Cart button is not displayed after hover.");
-
-        // Validate that the text "Pure Cotton Neon Green Tshirt" appears in the overlay
-        WebElement overlayTextElement = productOverlay.findElement(By.cssSelector(".overlay-content p"));
         String overlayText = overlayTextElement.getText();
-        Assert.assertTrue(overlayText.contains("Pure Cotton Neon Green Tshirt"), "The product name is not correct in the overlay: " + overlayText);
 
-        // Click on "Add to Cart" Button:
-        addToCartButtonHover.click();
+        Assert.assertTrue(productPrice.startsWith("Rs."), "Price format is incorrect for product: " + productName);// verify price
+        Assert.assertTrue(viewProductHref.contains("/product_details/"), "View Product link is incorrect for product: " + productName);// Validate the 'View Product' link is correct
+        Assert.assertTrue(addToCartButton.isDisplayed(), "Add to Cart button is not displayed for product: " + productName);// Validate the 'Add to Cart' button exists
+
+        Assert.assertTrue(priceText.contains("Rs."), "Price is not displayed or is in an incorrect format: " + priceText);// Validate that overlay is visible and contains the expected elements
+        Assert.assertTrue(addToCartButtonHover.isDisplayed(), "Add to Cart button is not displayed after hover.");// Validate that the "Add to Cart" button is visible
+        Assert.assertTrue(overlayText.contains("Pure Cotton Neon Green Tshirt"), "The product name is not correct in the overlay: " + overlayText);// Validate that the text "Pure Cotton Neon Green Tshirt" appears in the overlay
 
     }
 
-    @Test(priority = 3)
+    @Test(priority = 4)
     public void verifyModal(){
-        // Locate the modal by its ID
-        WebElement modal = driver.findElement(By.id("cartModal"));
-
-        // Custom wait condition to check for the 'show' class in the modal
         final boolean[] modalVisible = new boolean[1];
-        wait.waitAnonymous(modal,modalVisible,"class","show");
-        Assert.assertTrue(modalVisible[0], "Modal is not visible");
-        WebElement modalContent = wait.waitUntilVisibilityOfWebElementByClassName("modal-content");
-        // Verify modal title is "Added!"
-        WebElement modalTitle = modalContent.findElement(By.className("modal-title"));
+        List<WebElement> modalEles = shoppingCartFlow.modalVisibility(addToCartButtonHover, modalVisible);
+        WebElement modal = modalEles.get(0);
+        WebElement modalContent =modalEles.get(1);
+        WebElement modalTitle = modalEles.get(2);
+        WebElement modalBodyText = modalEles.get(3);
+        WebElement continueShoppingButton = modalEles.get(4);
         String modalTitleText = modalTitle.getText();
+
+        Assert.assertTrue(modalVisible[0], "Modal is not visible");
         Assert.assertEquals(modalTitleText, "Added!", "Modal title is not as expected.");
-
-        // Verify modal body text is "Your product has been added to cart."
-        WebElement modalBodyText = modalContent.findElement(By.xpath("//*[@id=\"cartModal\"]/div/div/div[2]/p[1]"));
         Assert.assertEquals(modalBodyText.getText().trim(),"Your product has been added to cart.", "Modal body text is not displayed correctly.");
-
-        // Verify "Continue Shopping" button is present and clickable
-        WebElement continueShoppingButton = wait.waitUntilVisibilityOfWebElementByCssSelector(modalContent,".btn.btn-success.close-modal");
         Assert.assertTrue(continueShoppingButton.isDisplayed(), "'Continue Shopping' button is not visible.");
         Assert.assertTrue(continueShoppingButton.isEnabled(), "'Continue Shopping' button is not clickable.");
-
-        // click on continue shopping button
-        continueShoppingButton.click();
-
 
         boolean visibility = Objects.requireNonNull(modal.getAttribute("class")).contains("fade");
         Assert.assertTrue(visibility, "Modal is still visible");

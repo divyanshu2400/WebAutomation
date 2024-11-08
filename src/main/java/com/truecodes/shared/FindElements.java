@@ -44,11 +44,19 @@ public class FindElements {
     public WebElement ByXPath(String xpath) {
         return driver.findElement(By.xpath(xpath));
     }
+    public WebElement ByXPathWebElement(WebElement webElement, String xpath) {
+        return webElement.findElement(By.xpath(xpath));
+    }
 
     public WebElement ByPartialLinkText(String text) {
         return driver.findElement(By.partialLinkText(text));
     }
-
+    public WebElement ByCSSAndWebElement(WebElement webElement, String cssLocator){
+        return webElement.findElement(By.cssSelector(cssLocator));
+    }
+    public WebElement ByClassAndWebElement(WebElement webElement, String cssLocator){
+        return webElement.findElement(By.className(cssLocator));
+    }
     public String getPageTitle() {
         return driver.getTitle();
     }

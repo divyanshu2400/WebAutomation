@@ -4,20 +4,21 @@ import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
 
-public class Actions {
-    private static Actions actions = null;
+public class Activities {
+    private static Activities activities = null;
     private WebDriver driver = null;
 
-    private Actions(WebDriver driver) {
+    private Activities(WebDriver driver) {
         this.driver = driver;
     }
 
-    public static Actions getActionsObject(WebDriver driver) {
-        if (Actions.actions == null) {
-            Actions.actions  = new Actions(driver);
+    public static Activities getActionsObject(WebDriver driver) {
+        if (Activities.activities == null) {
+            Activities.activities = new Activities(driver);
         }
-        return Actions.actions;
+        return Activities.activities;
     }
 
     public void clickElement(WebElement element) {
@@ -30,6 +31,11 @@ public class Actions {
     }
     public void enterKey(WebElement element){
         element.sendKeys(Keys.ENTER);
+    }
+
+    public void hover(WebElement element){
+        Actions actions = new Actions(this.driver);
+        actions.moveToElement(element).perform();
     }
 
     public void Maximize() {

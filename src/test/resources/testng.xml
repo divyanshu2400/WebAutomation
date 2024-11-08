@@ -1,0 +1,11 @@
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd" >
+
+<suite name="JavaSeleniumTAF">
+    <test name="Automation Exercise " >
+        <classes>
+            <class name="com.truecodes.APIDocTest" />
+            <class name="com.truecodes.HomePageElementTest"/>
+            <class name="com.truecodes.ShoppingCartFlowTest"/>
+        </classes>
+    </test>
+</suite>

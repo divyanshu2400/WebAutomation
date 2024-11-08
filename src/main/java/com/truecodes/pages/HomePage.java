@@ -1,10 +1,8 @@
 package com.truecodes.pages;
 
-import com.truecodes.shared.Actions;
+import com.truecodes.shared.Activities;
 import com.truecodes.shared.FindElements;
 import com.truecodes.shared.PageWaits;
-import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
@@ -14,11 +12,11 @@ import java.util.List;
 public class HomePage {
     private static HomePage homePageInstance;
     private final FindElements findElements;
-    private final Actions actions;
+    private final Activities activities;
     private final PageWaits wait;
     private final WebDriver driver;
     private HomePage(WebDriver webDriver){
-        this.actions = Actions.getActionsObject(webDriver);
+        this.activities = Activities.getActionsObject(webDriver);
         this.findElements = FindElements.getInstance(webDriver);
         this.wait = PageWaits.getPageWaitsObject(webDriver);
         this.driver = webDriver;
@@ -37,21 +35,21 @@ public class HomePage {
     }
     public List<WebElement> goToBrandsSection(){
         WebElement brandsSection = findElements.ByXPath("//h2[normalize-space()='Brands']");
-        actions.scrollWindow(brandsSection);
+        activities.scrollWindow(brandsSection);
         wait.waitUntilVisibility(brandsSection);
         return this.listElementsByXpath("//div[@class='brands-name']//ul[@class='nav nav-pills nav-stacked']//li");
 
     }
     public List<WebElement> goToFeaturedSection(){
         WebElement featuresSection = findElements.ByXPath("//h2[normalize-space()='Features Items']");
-        actions.scrollWindow(featuresSection);
+        activities.scrollWindow(featuresSection);
         wait.waitUntilVisibility(featuresSection);
         return listElements(".features_items .col-sm-4");
     }
     public List<WebElement> goToFooterSection(){
         List<WebElement> webElements = new ArrayList<>();
         WebElement footerSection = findElements.ByXPath("//h2[normalize-space()='Subscription']");
-        actions.scrollWindow(footerSection);
+        activities.scrollWindow(footerSection);
         wait.waitUntilVisibility(footerSection);
 
         WebElement emailInput = wait.waitUntilVisibilityById(driver,"susbscribe_email");

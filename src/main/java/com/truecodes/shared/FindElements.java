@@ -30,6 +30,16 @@ public class FindElements {
     public WebElement byWebElementNXpath(WebElement webElement, String xpath){
         return webElement.findElement(By.xpath(xpath));
     }
+    public WebElement byWebElementNCss(WebElement webElement, String cssLocator){
+        return webElement.findElement(By.cssSelector(cssLocator));
+    }
+    public WebElement byWebElementNClass(WebElement webElement, String className){
+        return webElement.findElement(By.className(className));
+    }
+    public List<WebElement> byWebElementNTag(WebElement webElement, String tag){
+        return webElement.findElements(By.tagName(tag));
+    }
+//    public List<WebElement> get
     public List<WebElement> getListByXpath(String cssLocator) {
         return driver.findElements(By.xpath(cssLocator));
     }

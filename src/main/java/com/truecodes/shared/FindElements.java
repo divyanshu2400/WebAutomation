@@ -27,6 +27,9 @@ public class FindElements {
     public List<WebElement> getListByCSS(String cssLocator) {
         return driver.findElements(By.cssSelector(cssLocator));
     }
+    public WebElement byWebElementNXpath(WebElement webElement, String xpath){
+        return webElement.findElement(By.xpath(xpath));
+    }
     public List<WebElement> getListByXpath(String cssLocator) {
         return driver.findElements(By.xpath(cssLocator));
     }

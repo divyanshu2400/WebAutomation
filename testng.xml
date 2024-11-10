@@ -1,0 +1,12 @@
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd" >
+<suite name="WebAutomationLearning">
+
+    <test name="AutomationExercise">
+        <classes>
+            <class name="com.truecodes.APIListTest"/>
+            <class name="com.truecodes.HomePageElementTest"/>
+            <class name="com.truecodes.ShoppingCartFlowTest"/>
+        </classes>
+    </test>
+
+</suite>
